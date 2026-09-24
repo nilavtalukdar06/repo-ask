@@ -14,7 +14,6 @@ export function RepositoryMenuItem({ repository }: { repository: Repository }) {
 
   const href = `/chat/${repository.id}`;
   const isActive = pathname === href;
-  const isIndexing = repository.status === "indexing";
 
   return (
     <SidebarMenuItem>
@@ -29,13 +28,17 @@ export function RepositoryMenuItem({ repository }: { repository: Repository }) {
       >
         <span className="flex min-w-0 flex-1 flex-col gap-1.5">
           <span className="truncate font-medium">{repository.name}</span>
-          {isIndexing ? (
-            <span className="flex flex-col gap-1 animate-pulse">
-              <span className="text-xs text-amber-600 dark:text-amber-500 flex justify-start gap-2 items-center">
-                Indexing...
-              </span>
+          {repository.status === "indexing" && (
+            <span className="animate-pulse text-xs text-amber-600 dark:text-amber-500">
+              Indexing...
             </span>
-          ) : (
+          )}
+          {repository.status === "failed" && (
+            <span className="text-xs text-red-600 dark:text-red-500">
+              Failed to index
+            </span>
+          )}
+          {repository.status === "indexed" && (
             <span className="text-xs text-muted-foreground">
               <span className="text-emerald-600 dark:text-emerald-500">
                 Indexed

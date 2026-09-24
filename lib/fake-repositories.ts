@@ -9,7 +9,11 @@ export type Repository =
       id: string;
       name: string;
       status: "indexing";
-      progress: number;
+    }
+  | {
+      id: string;
+      name: string;
+      status: "failed";
     };
 
 export const fakeRepositories: Repository[] = [
@@ -23,6 +27,5 @@ export const fakeRepositories: Repository[] = [
     id: "2",
     name: "openai/openai-cookbook",
     status: "indexing",
-    progress: 47,
   },
 ];

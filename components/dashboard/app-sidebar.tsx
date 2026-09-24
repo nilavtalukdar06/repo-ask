@@ -21,6 +21,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { cn } from "cn";
 
 type AppSidebarProps = {
   user: {
@@ -48,6 +49,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
             <SidebarMenuButton
               isActive={pathname === "/dashboard"}
               render={<Link href="/dashboard" />}
+              className={cn(pathname === "/dashboard" && "border")}
             >
               <LayoutDashboardIcon />
               <span>Dashboard</span>
@@ -55,7 +57,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
           </SidebarMenuItem>
         </SidebarMenu>
 
-        <Button size="sm" className="w-full justify-start gap-2">
+        <Button className="w-full justify-start items-center gap-2">
           <PlusIcon />
           Add repository
         </Button>

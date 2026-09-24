@@ -96,7 +96,7 @@ export function NavUser({ user }: NavUserProps) {
             <span
               aria-hidden="true"
               className={cn(
-                "pointer-events-none absolute inset-0 rounded-md",
+                "pointer-events-none absolute inset-0 rounded-lg",
                 SIDEBAR_GLASS_CLASSNAME,
               )}
             />
