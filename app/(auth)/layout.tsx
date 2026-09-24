@@ -1,10 +1,19 @@
+import { redirect } from "next/navigation";
+
+import { getServerSession } from "@/lib/auth-session";
 import { GitHubIcon } from "@/components/icons/github";
 
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession();
+
+  if (session) {
+    redirect("/");
+  }
+
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6">
       <div className="flex items-center gap-2">

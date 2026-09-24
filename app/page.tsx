@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { getServerSession } from "@/lib/auth-session";
-import { SignOutButton } from "@/components/signout-button";
+import { SignOutButton } from "@/components/auth/signout-button";
 
 export default async function Page() {
   const session = await getServerSession();
