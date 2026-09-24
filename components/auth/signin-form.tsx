@@ -26,6 +26,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 export function SignInForm() {
   const router = useRouter();
@@ -122,6 +123,7 @@ export function SignInForm() {
           disabled={isPending}
           className="w-full"
         >
+          {isPending && <Spinner />}
           {isPending ? "Signing in..." : "Sign in"}
         </Button>
         <p className="text-center text-sm text-muted-foreground">

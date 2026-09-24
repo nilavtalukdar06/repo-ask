@@ -26,6 +26,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 export function SignUpForm() {
   const router = useRouter();
@@ -143,6 +144,7 @@ export function SignUpForm() {
           disabled={isPending}
           className="w-full"
         >
+          {isPending && <Spinner />}
           {isPending ? "Creating account..." : "Create account"}
         </Button>
         <p className="text-center text-sm text-muted-foreground">
