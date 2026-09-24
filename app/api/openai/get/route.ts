@@ -14,6 +14,10 @@ export async function GET() {
         { status: 401 },
       );
     }
+    await secret.auth().universalAuth.login({
+      clientId: process.env.CLIENT_ID!,
+      clientSecret: process.env.CLIENT_SECRET!,
+    });
     const apiKey = await secret.secrets().getSecret({
       environment: "dev",
       projectId: process.env.PROJECT_ID!,

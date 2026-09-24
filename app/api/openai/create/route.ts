@@ -28,6 +28,10 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
+    await secret.auth().universalAuth.login({
+      clientId: process.env.CLIENT_ID!,
+      clientSecret: process.env.CLIENT_SECRET!,
+    });
     await secret.secrets().createSecret(`API_KEY_${session.user.id}`, {
       environment: "dev",
       projectId: process.env.PROJECT_ID!,
@@ -52,6 +56,11 @@ export async function POST(request: NextRequest) {
         apiKeyPrefix: parsedBody.data.apiKey.slice(0, 8),
       },
     });
+
+    return NextResponse.json(
+      { message: "api key saved successfully" },
+      { status: 201 },
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(

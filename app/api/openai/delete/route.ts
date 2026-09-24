@@ -15,6 +15,10 @@ export async function DELETE() {
         { status: 401 },
       );
     }
+    await secret.auth().universalAuth.login({
+      clientId: process.env.CLIENT_ID!,
+      clientSecret: process.env.CLIENT_SECRET!,
+    });
     await secret.secrets().deleteSecret(`API_KEY_${session.user.id}`, {
       environment: "dev",
       projectId: process.env.PROJECT_ID!,

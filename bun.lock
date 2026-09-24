@@ -7,6 +7,7 @@
       "dependencies": {
         "@base-ui/react": "^1.8.0",
         "@hookform/resolvers": "^5.9.1",
+        "@imagekit/next": "^2.1.6",
         "@infisical/sdk": "^5.0.2",
         "@prisma/adapter-pg": "^7.10.0",
         "@prisma/client": "7",
@@ -299,6 +300,10 @@
     "@humanwhocodes/module-importer": ["@humanwhocodes/module-importer@1.0.1", "", {}, "sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA=="],
 
     "@humanwhocodes/retry": ["@humanwhocodes/retry@0.4.3", "", {}, "sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ=="],
+
+    "@imagekit/javascript": ["@imagekit/javascript@5.5.1", "", {}, "sha512-eGEbZGKCqX/rC1iwceb1pLg5oHJhGkH68+i6JhFFSDktrdCMC/475a5R0Obtnk6IbIc4eV+1vynkK4WZFeLWEQ=="],
+
+    "@imagekit/next": ["@imagekit/next@2.1.6", "", { "dependencies": { "@imagekit/javascript": "^5.5.0" }, "peerDependencies": { "next": ">= 13" } }, "sha512-VQH89cgppjscajV1R+ZN5cydq3NFyiL/5ytYZrZTiWIappIwW2DG2juHjRVIIZlz0Rc7nLZ5qfNC2GNkzjQiLQ=="],
 
     "@img/colour": ["@img/colour@1.1.0", "", {}, "sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ=="],
 

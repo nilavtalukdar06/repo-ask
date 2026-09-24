@@ -15,6 +15,11 @@ export const auth = betterAuth({
     minPasswordLength: 8,
     maxPasswordLength: 128,
   },
+  user: {
+    deleteUser: {
+      enabled: true,
+    },
+  },
   session: {
     cookieCache: {
       enabled: true,
