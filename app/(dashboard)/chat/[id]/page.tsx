@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import type { UIMessage } from "ai";
+import type { UIDataTypes, UIMessage, UIMessagePart, UITools } from "ai";
 
 import { getServerSession } from "@/lib/auth-session";
 import prisma from "@/lib/prisma";
@@ -30,11 +30,17 @@ export default async function ChatPage({ params }: ChatPageProps) {
     orderBy: { createdAt: "asc" },
   });
 
-  const initialMessages: UIMessage[] = messageRows.map((row) => ({
-    id: row.id,
-    role: row.role === "USER" ? "user" : "assistant",
-    parts: row.parts as UIMessage["parts"],
-  }));
+  const initialMessages: UIMessage[] = messageRows.map(
+    (row: {
+      id: any;
+      role: string;
+      parts: UIMessagePart<UIDataTypes, UITools>[];
+    }) => ({
+      id: row.id,
+      role: row.role === "USER" ? "user" : "assistant",
+      parts: row.parts as UIMessage["parts"],
+    }),
+  );
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
