@@ -1,6 +1,11 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import type { AddRepositoryInput } from "@/app/api/repository/schema";
 import type { RepositoryStatus } from "@/app/generated/prisma/client";
@@ -27,19 +32,39 @@ async function parseJson(response: Response) {
   return response.json().catch(() => ({}));
 }
 
-export function useRepositoriesQuery() {
+export type RepositoriesPage = {
+  repositories: RepositoryRecord[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+};
+
+export function useRepositoriesQuery({
+  page,
+  search,
+}: {
+  page: number;
+  search: string;
+}) {
   return useQuery({
-    queryKey: repositoriesQueryKey,
-    queryFn: async (): Promise<RepositoryRecord[]> => {
-      const response = await fetch("/api/repository/get");
+    queryKey: [...repositoriesQueryKey, { page, search }],
+    queryFn: async (): Promise<RepositoriesPage> => {
+      const params = new URLSearchParams({ page: String(page) });
+      if (search) {
+        params.set("q", search);
+      }
+
+      const response = await fetch(`/api/repository/get?${params}`);
       const data = await parseJson(response);
 
       if (!response.ok) {
         throw new Error(data.message ?? "Failed to load repositories.");
       }
 
-      return data.repositories as RepositoryRecord[];
+      return data as RepositoriesPage;
     },
+    placeholderData: keepPreviousData,
   });
 }
 

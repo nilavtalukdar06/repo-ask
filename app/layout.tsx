@@ -1,5 +1,6 @@
 import { Geist_Mono, Inter } from "next/font/google";
 import type { Metadata } from "next";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import "./globals.css";
 import { QueryProvider } from "@/components/query-provider";
@@ -83,7 +84,7 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <ThemeProvider>
           <QueryProvider>
-            {children}
+            <NuqsAdapter>{children}</NuqsAdapter>
             <Toaster />
           </QueryProvider>
         </ThemeProvider>
