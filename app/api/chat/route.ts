@@ -13,10 +13,11 @@ import type { Prisma } from "@/app/generated/prisma/client";
 import { auth } from "@/lib/auth";
 import { getApiKeyForUser } from "@/lib/ai-gateway-key-cache";
 import prisma from "@/lib/prisma";
+import { formatContext, retrieveContext } from "@/lib/retrieval/pipeline";
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
-const CHAT_MODEL = "google/gemini-2.5-flash";
+const CHAT_MODEL = "inclusionai/ling-3.0-flash-fin-free";
 
 export async function POST(request: NextRequest) {
   try {
@@ -66,10 +67,6 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
-
-    // Persist the user's message before calling the model, so it's never
-    // lost even if the generation below fails. Upsert because a retry after
-    // a failed generation resends the same message id.
     const userMessageRow = await prisma.message.upsert({
       where: { id: message.id },
       update: {},
@@ -80,12 +77,6 @@ export async function POST(request: NextRequest) {
         parts: message.parts as unknown as Prisma.InputJsonValue,
       },
     });
-
-    // A previous attempt for this turn may have finished generating and been
-    // saved, but then failed to reach the client (e.g. a dropped connection
-    // while piping the response) — leaving a stale assistant reply the user
-    // never saw. Clear anything after this user message so the retry starts
-    // clean and doesn't collide with — or get confused by — that leftover.
     await prisma.message.deleteMany({
       where: {
         repositoryId,
@@ -107,23 +98,34 @@ export async function POST(request: NextRequest) {
     const validatedMessages = await validateUIMessages({ messages });
 
     const gateway = createGateway({ apiKey });
+    const chatModel = gateway.chat(CHAT_MODEL);
+
+    const queryText = message.parts
+      .filter((part) => part.type === "text")
+      .map((part) => part.text)
+      .join("\n")
+      .trim();
+
+    const retrievedChunks = queryText
+      ? await retrieveContext(chatModel, repositoryId, queryText)
+      : [];
 
     const result = streamText({
-      model: gateway.chat(CHAT_MODEL),
-      system: `You are a helpful assistant answering questions about the GitHub repository ${repository.owner}/${repository.name} (${repository.url}).`,
+      model: chatModel,
+      system: `You are a helpful assistant answering questions about the GitHub repository ${repository.owner}/${repository.name} (${repository.url}).
+
+Answer using only the retrieved code context below. If it doesn't contain enough information to answer, say so instead of guessing. Cite file paths (and line numbers, when relevant) for anything you reference.
+
+${formatContext(retrievedChunks)}`,
       messages: await convertToModelMessages(validatedMessages),
     });
 
-    // Keep generating and persisting the response even if the client
-    // disconnects mid-stream.
     result.consumeStream();
 
     return result.toUIMessageStreamResponse({
       originalMessages: messages,
       generateMessageId: createIdGenerator({ prefix: "msg", size: 16 }),
       onEnd: async ({ responseMessage, outcome }) => {
-        // Only persist a completed turn — a failed/aborted generation has no
-        // meaningful content and would otherwise leave an empty message.
         if (outcome.status !== "completed") return;
 
         await prisma.message.create({
