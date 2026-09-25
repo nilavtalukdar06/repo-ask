@@ -7,5 +7,9 @@ export const metadata: Metadata = {
 };
 
 export default function ProfilePage() {
-  return <ProfileScreen />;
+  return (
+    <div className="min-h-0 h-full overflow-auto">
+      <ProfileScreen />
+    </div>
+  );
 }
