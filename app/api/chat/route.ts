@@ -67,21 +67,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const previousMessageRows = await prisma.message.findMany({
-      where: { repositoryId },
-      orderBy: { createdAt: "asc" },
-    });
-
-    const previousMessages: UIMessage[] = previousMessageRows.map((row) => ({
-      id: row.id,
-      role: row.role === "USER" ? "user" : "assistant",
-      parts: row.parts as UIMessage["parts"],
-    }));
-
     // Persist the user's message before calling the model, so it's never
-    // lost even if the generation below fails.
-    await prisma.message.create({
-      data: {
+    // lost even if the generation below fails. Upsert because a retry after
+    // a failed generation resends the same message id.
+    const userMessageRow = await prisma.message.upsert({
+      where: { id: message.id },
+      update: {},
+      create: {
         id: message.id,
         repositoryId,
         role: "USER",
@@ -89,7 +81,29 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const messages = [...previousMessages, message];
+    // A previous attempt for this turn may have finished generating and been
+    // saved, but then failed to reach the client (e.g. a dropped connection
+    // while piping the response) — leaving a stale assistant reply the user
+    // never saw. Clear anything after this user message so the retry starts
+    // clean and doesn't collide with — or get confused by — that leftover.
+    await prisma.message.deleteMany({
+      where: {
+        repositoryId,
+        createdAt: { gt: userMessageRow.createdAt },
+      },
+    });
+
+    const messageRows = await prisma.message.findMany({
+      where: { repositoryId },
+      orderBy: { createdAt: "asc" },
+    });
+
+    const messages: UIMessage[] = messageRows.map((row) => ({
+      id: row.id,
+      role: row.role === "USER" ? "user" : "assistant",
+      parts: row.parts as UIMessage["parts"],
+    }));
+
     const validatedMessages = await validateUIMessages({ messages });
 
     const gateway = createGateway({ apiKey });

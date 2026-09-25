@@ -20,9 +20,9 @@ export default async function DashboardLayout({
   }
 
   return (
-    <SidebarProvider className="h-svh">
+    <SidebarProvider>
       <AppSidebar user={session.user} />
-      <SidebarInset className="min-h-0 border shadow-none">
+      <SidebarInset className="border shadow-none">
         <header className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
           <SidebarTrigger />
         </header>

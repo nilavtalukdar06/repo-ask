@@ -18,17 +18,10 @@ import {
   MessageContent,
   MessageResponse,
 } from "@/components/ai-elements/message";
-import {
-  PromptInput,
-  PromptInputBody,
-  type PromptInputMessage,
-  PromptInputSubmit,
-  PromptInputTextarea,
-} from "@/components/ai-elements/prompt-input";
+import { PromptInput } from "@/components/chat/prompt-input";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { Suggestion } from "@/components/ai-elements/suggestion";
 import { Button } from "@/components/ui/button";
-import { InputGroupAddon } from "@/components/ui/input-group";
 import { GLASS_CLASSNAME } from "../dashboard/glass";
 import { cn } from "cn";
 
@@ -66,9 +59,9 @@ export function ChatView({
       }),
     });
 
-  const handleSubmit = (message: PromptInputMessage) => {
-    if (!message.text?.trim()) return;
-    sendMessage({ text: message.text });
+  const handleSubmit = () => {
+    if (!input.trim()) return;
+    sendMessage({ text: input });
     setInput("");
   };
 
@@ -184,25 +177,12 @@ export function ChatView({
       </Conversation>
 
       <div className="shrink-0 p-4">
-        <PromptInput onSubmit={handleSubmit}>
-          <PromptInputBody>
-            <PromptInputTextarea
-              value={input}
-              onChange={(e) => setInput(e.currentTarget.value)}
-              placeholder="Ask about this repository..."
-              rows={1}
-              className="min-h-0 resize-none self-center py-0 leading-normal"
-            />
-          </PromptInputBody>
-          <InputGroupAddon align="inline-end">
-            <PromptInputSubmit
-              status={status}
-              size="icon-sm"
-              className="rounded-full"
-              disabled={status === "ready" && !input.trim()}
-            />
-          </InputGroupAddon>
-        </PromptInput>
+        <PromptInput
+          value={input}
+          onChange={setInput}
+          onSubmit={handleSubmit}
+          status={status}
+        />
       </div>
     </div>
   );
