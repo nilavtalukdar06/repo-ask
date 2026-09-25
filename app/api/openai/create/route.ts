@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { setCachedApiKey } from "@/lib/openai-key-cache";
 import prisma from "@/lib/prisma";
 import { secret } from "@/lib/secret";
 import { headers } from "next/headers";
@@ -37,6 +38,7 @@ export async function POST(request: NextRequest) {
       projectId: process.env.PROJECT_ID!,
       secretValue: parsedBody.data.apiKey,
     });
+    await setCachedApiKey(session.user.id, parsedBody.data.apiKey);
     const existingProfile = await prisma.profile.findUnique({
       where: {
         userId: session.user.id,

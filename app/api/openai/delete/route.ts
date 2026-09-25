@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { deleteCachedApiKey } from "@/lib/openai-key-cache";
 import prisma from "@/lib/prisma";
 import { secret } from "@/lib/secret";
 import { headers } from "next/headers";
@@ -24,6 +25,7 @@ export async function DELETE() {
       projectId: process.env.PROJECT_ID!,
       secretPath: "/",
     });
+    await deleteCachedApiKey(session.user.id);
     const existingProfile = await prisma.profile.findUnique({
       where: {
         userId: session.user.id,
