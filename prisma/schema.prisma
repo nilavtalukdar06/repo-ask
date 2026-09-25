@@ -13,6 +13,11 @@ enum RepositoryStatus {
   FAILED
 }
 
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
 model User {
   id            String       @id
   name          String
@@ -106,9 +111,21 @@ model Repository {
   sandboxId     String?
   userId        String
   user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages      Message[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
   @@unique([userId, owner, name])
   @@index([userId])
+}
+
+model Message {
+  id           String      @id
+  repositoryId String
+  repository   Repository  @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  role         MessageRole
+  parts        Json
+  createdAt    DateTime    @default(now())
+
+  @@index([repositoryId, createdAt])
 }

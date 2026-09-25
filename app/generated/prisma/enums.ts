@@ -16,3 +16,11 @@ export const RepositoryStatus = {
 } as const
 
 export type RepositoryStatus = (typeof RepositoryStatus)[keyof typeof RepositoryStatus]
+
+
+export const MessageRole = {
+  USER: 'USER',
+  ASSISTANT: 'ASSISTANT'
+} as const
+
+export type MessageRole = (typeof MessageRole)[keyof typeof MessageRole]

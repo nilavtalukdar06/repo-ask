@@ -79,7 +79,7 @@ export function useCreateApiKeyMutation() {
 
   return useMutation({
     mutationFn: async (apiKey: string) => {
-      const response = await fetch("/api/openai/create", {
+      const response = await fetch("/api/ai-gateway/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ apiKey }),
@@ -104,7 +104,7 @@ export function useRemoveApiKeyMutation() {
 
   return useMutation({
     mutationFn: async () => {
-      const response = await fetch("/api/openai/delete", {
+      const response = await fetch("/api/ai-gateway/delete", {
         method: "DELETE",
       });
 

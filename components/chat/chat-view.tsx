@@ -1,0 +1,209 @@
+"use client";
+
+import { Fragment, useState } from "react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, type UIMessage } from "ai";
+import { AlertTriangleIcon, CopyIcon, RefreshCcwIcon } from "lucide-react";
+
+import {
+  Conversation,
+  ConversationContent,
+  ConversationEmptyState,
+  ConversationScrollButton,
+} from "@/components/ai-elements/conversation";
+import {
+  Message,
+  MessageAction,
+  MessageActions,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
+import {
+  PromptInput,
+  PromptInputBody,
+  type PromptInputMessage,
+  PromptInputSubmit,
+  PromptInputTextarea,
+} from "@/components/ai-elements/prompt-input";
+import { Shimmer } from "@/components/ai-elements/shimmer";
+import { Suggestion } from "@/components/ai-elements/suggestion";
+import { Button } from "@/components/ui/button";
+import { InputGroupAddon } from "@/components/ui/input-group";
+import { GLASS_CLASSNAME } from "../dashboard/glass";
+import { cn } from "cn";
+
+const SUGGESTED_PROMPTS = [
+  "What does this repository do?",
+  "Where is the main entry point?",
+  "How is the project structured?",
+];
+
+type ChatRepository = {
+  id: string;
+  owner: string;
+  name: string;
+  description: string | null;
+};
+
+export function ChatView({
+  repository,
+  initialMessages,
+}: {
+  repository: ChatRepository;
+  initialMessages: UIMessage[];
+}) {
+  const [input, setInput] = useState("");
+
+  const { messages, sendMessage, status, error, regenerate, clearError } =
+    useChat({
+      id: repository.id,
+      messages: initialMessages,
+      transport: new DefaultChatTransport({
+        api: "/api/chat",
+        prepareSendMessagesRequest({ messages, id }) {
+          return { body: { message: messages[messages.length - 1], id } };
+        },
+      }),
+    });
+
+  const handleSubmit = (message: PromptInputMessage) => {
+    if (!message.text?.trim()) return;
+    sendMessage({ text: message.text });
+    setInput("");
+  };
+
+  const handleRetry = () => {
+    clearError();
+    regenerate();
+  };
+
+  const isThinking = status === "submitted";
+
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      <Conversation>
+        <ConversationContent>
+          {messages.length === 0 ? (
+            <ConversationEmptyState>
+              <p className="text-muted-foreground font-medium text-base">
+                Try asking
+              </p>
+              <div className="flex w-full max-w-md flex-col gap-3">
+                {SUGGESTED_PROMPTS.map((suggestion) => (
+                  <Suggestion
+                    key={suggestion}
+                    suggestion={suggestion}
+                    onClick={(text) => sendMessage({ text })}
+                    variant="outline"
+                    className={cn(
+                      GLASS_CLASSNAME,
+                      "rounded-lg py-4 px-3 flex justify-start",
+                    )}
+                  />
+                ))}
+              </div>
+            </ConversationEmptyState>
+          ) : (
+            messages
+              .filter(
+                (message) =>
+                  message.role !== "assistant" ||
+                  message.parts.some(
+                    (part) => part.type === "text" && part.text.trim(),
+                  ),
+              )
+              .map((message, index, filteredMessages) => {
+                const isLastMessage = index === filteredMessages.length - 1;
+                const canAct =
+                  message.role === "assistant" &&
+                  isLastMessage &&
+                  status === "ready";
+
+                return (
+                  <Fragment key={message.id}>
+                    <Message from={message.role}>
+                      <MessageContent>
+                        {message.parts.map((part, i) => {
+                          if (part.type === "text") {
+                            return (
+                              <MessageResponse key={`${message.id}-${i}`}>
+                                {part.text}
+                              </MessageResponse>
+                            );
+                          }
+                          return null;
+                        })}
+                      </MessageContent>
+                    </Message>
+                    {canAct && (
+                      <MessageActions>
+                        <MessageAction
+                          label="Retry"
+                          onClick={() => regenerate()}
+                        >
+                          <RefreshCcwIcon className="size-3" />
+                        </MessageAction>
+                        <MessageAction
+                          label="Copy"
+                          onClick={() => {
+                            const text = message.parts
+                              .filter((part) => part.type === "text")
+                              .map((part) => part.text)
+                              .join("");
+                            navigator.clipboard.writeText(text);
+                          }}
+                        >
+                          <CopyIcon className="size-3" />
+                        </MessageAction>
+                      </MessageActions>
+                    )}
+                  </Fragment>
+                );
+              })
+          )}
+          {isThinking && (
+            <Message from="assistant">
+              <MessageContent>
+                <Shimmer>Thinking...</Shimmer>
+              </MessageContent>
+            </Message>
+          )}
+          {error && (
+            <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-3 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              <span className="flex items-center gap-2">
+                <AlertTriangleIcon className="size-4 shrink-0" />
+                {error.message || "Something went wrong. Please try again."}
+              </span>
+              <Button size="sm" variant="outline" onClick={handleRetry}>
+                Retry
+              </Button>
+            </div>
+          )}
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
+
+      <div className="shrink-0 p-4">
+        <PromptInput onSubmit={handleSubmit}>
+          <PromptInputBody>
+            <PromptInputTextarea
+              value={input}
+              onChange={(e) => setInput(e.currentTarget.value)}
+              placeholder="Ask about this repository..."
+              rows={1}
+              className="min-h-0 resize-none self-center py-0 leading-normal"
+            />
+          </PromptInputBody>
+          <InputGroupAddon align="inline-end">
+            <PromptInputSubmit
+              status={status}
+              size="icon-sm"
+              className="rounded-full"
+              disabled={status === "ready" && !input.trim()}
+            />
+          </InputGroupAddon>
+        </PromptInput>
+      </div>
+    </div>
+  );
+}

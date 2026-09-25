@@ -57,10 +57,10 @@ export function ApiKeySection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>OpenAI API key</CardTitle>
+        <CardTitle>AI Gateway API key</CardTitle>
         <CardDescription>
-          RepoAsk uses your own key to call the OpenAI API. Stored encrypted,
-          never shared or logged.
+          RepoAsk uses your own Vercel AI Gateway key to call language models.
+          Stored encrypted, never shared or logged.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -71,7 +71,7 @@ export function ApiKeySection() {
             <div className="flex items-center gap-2">
               <KeyRoundIcon className="size-4 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium">Personal · OpenAI</p>
+                <p className="text-sm font-medium">Personal · AI Gateway</p>
                 <p className="font-mono text-xs text-muted-foreground">
                   {profile?.apiKeyPrefix}••••••••••••
                 </p>
@@ -90,18 +90,18 @@ export function ApiKeySection() {
           </div>
         ) : (
           <Field>
-            <FieldLabel htmlFor="openai-api-key">API key</FieldLabel>
+            <FieldLabel htmlFor="ai-gateway-api-key">API key</FieldLabel>
             <Input
-              id="openai-api-key"
+              id="ai-gateway-api-key"
               type="password"
-              placeholder="sk-..."
+              placeholder="Paste your Vercel AI Gateway API key"
               value={apiKey}
               onChange={(event) => setApiKey(event.target.value)}
               autoComplete="off"
             />
             <FieldDescription>
-              Paste your OpenAI secret key. We only store an encrypted copy and
-              a short prefix.
+              Create one at vercel.com under AI → API Keys. We only store an
+              encrypted copy and a short prefix.
             </FieldDescription>
             <Button
               type="button"

@@ -297,6 +297,7 @@ export type RepositoryWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Repository"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Repository"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  messages?: Prisma.MessageListRelationFilter
 }
 
 export type RepositoryOrderByWithRelationInput = {
@@ -316,6 +317,7 @@ export type RepositoryOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  messages?: Prisma.MessageOrderByRelationAggregateInput
 }
 
 export type RepositoryWhereUniqueInput = Prisma.AtLeast<{
@@ -339,6 +341,7 @@ export type RepositoryWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Repository"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Repository"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  messages?: Prisma.MessageListRelationFilter
 }, "id" | "userId_owner_name">
 
 export type RepositoryOrderByWithAggregationInput = {
@@ -401,6 +404,7 @@ export type RepositoryCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRepositoriesInput
+  messages?: Prisma.MessageCreateNestedManyWithoutRepositoryInput
 }
 
 export type RepositoryUncheckedCreateInput = {
@@ -419,6 +423,7 @@ export type RepositoryUncheckedCreateInput = {
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutRepositoryInput
 }
 
 export type RepositoryUpdateInput = {
@@ -437,6 +442,7 @@ export type RepositoryUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRepositoriesNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutRepositoryNestedInput
 }
 
 export type RepositoryUncheckedUpdateInput = {
@@ -455,6 +461,7 @@ export type RepositoryUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutRepositoryNestedInput
 }
 
 export type RepositoryCreateManyInput = {
@@ -588,6 +595,11 @@ export type RepositorySumOrderByAggregateInput = {
   stars?: Prisma.SortOrder
 }
 
+export type RepositoryScalarRelationFilter = {
+  is?: Prisma.RepositoryWhereInput
+  isNot?: Prisma.RepositoryWhereInput
+}
+
 export type RepositoryCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.RepositoryCreateWithoutUserInput, Prisma.RepositoryUncheckedCreateWithoutUserInput> | Prisma.RepositoryCreateWithoutUserInput[] | Prisma.RepositoryUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.RepositoryCreateOrConnectWithoutUserInput | Prisma.RepositoryCreateOrConnectWithoutUserInput[]
@@ -642,6 +654,20 @@ export type EnumRepositoryStatusFieldUpdateOperationsInput = {
   set?: $Enums.RepositoryStatus
 }
 
+export type RepositoryCreateNestedOneWithoutMessagesInput = {
+  create?: Prisma.XOR<Prisma.RepositoryCreateWithoutMessagesInput, Prisma.RepositoryUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.RepositoryCreateOrConnectWithoutMessagesInput
+  connect?: Prisma.RepositoryWhereUniqueInput
+}
+
+export type RepositoryUpdateOneRequiredWithoutMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.RepositoryCreateWithoutMessagesInput, Prisma.RepositoryUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.RepositoryCreateOrConnectWithoutMessagesInput
+  upsert?: Prisma.RepositoryUpsertWithoutMessagesInput
+  connect?: Prisma.RepositoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RepositoryUpdateToOneWithWhereWithoutMessagesInput, Prisma.RepositoryUpdateWithoutMessagesInput>, Prisma.RepositoryUncheckedUpdateWithoutMessagesInput>
+}
+
 export type RepositoryCreateWithoutUserInput = {
   id?: string
   name: string
@@ -657,6 +683,7 @@ export type RepositoryCreateWithoutUserInput = {
   sandboxId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  messages?: Prisma.MessageCreateNestedManyWithoutRepositoryInput
 }
 
 export type RepositoryUncheckedCreateWithoutUserInput = {
@@ -674,6 +701,7 @@ export type RepositoryUncheckedCreateWithoutUserInput = {
   sandboxId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutRepositoryInput
 }
 
 export type RepositoryCreateOrConnectWithoutUserInput = {
@@ -723,6 +751,94 @@ export type RepositoryScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Repository"> | Date | string
 }
 
+export type RepositoryCreateWithoutMessagesInput = {
+  id?: string
+  name: string
+  owner: string
+  url: string
+  description?: string | null
+  defaultBranch?: string | null
+  language?: string | null
+  stars?: number | null
+  status?: $Enums.RepositoryStatus
+  lastIndexedAt?: Date | string | null
+  errorMessage?: string | null
+  sandboxId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutRepositoriesInput
+}
+
+export type RepositoryUncheckedCreateWithoutMessagesInput = {
+  id?: string
+  name: string
+  owner: string
+  url: string
+  description?: string | null
+  defaultBranch?: string | null
+  language?: string | null
+  stars?: number | null
+  status?: $Enums.RepositoryStatus
+  lastIndexedAt?: Date | string | null
+  errorMessage?: string | null
+  sandboxId?: string | null
+  userId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RepositoryCreateOrConnectWithoutMessagesInput = {
+  where: Prisma.RepositoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.RepositoryCreateWithoutMessagesInput, Prisma.RepositoryUncheckedCreateWithoutMessagesInput>
+}
+
+export type RepositoryUpsertWithoutMessagesInput = {
+  update: Prisma.XOR<Prisma.RepositoryUpdateWithoutMessagesInput, Prisma.RepositoryUncheckedUpdateWithoutMessagesInput>
+  create: Prisma.XOR<Prisma.RepositoryCreateWithoutMessagesInput, Prisma.RepositoryUncheckedCreateWithoutMessagesInput>
+  where?: Prisma.RepositoryWhereInput
+}
+
+export type RepositoryUpdateToOneWithWhereWithoutMessagesInput = {
+  where?: Prisma.RepositoryWhereInput
+  data: Prisma.XOR<Prisma.RepositoryUpdateWithoutMessagesInput, Prisma.RepositoryUncheckedUpdateWithoutMessagesInput>
+}
+
+export type RepositoryUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  owner?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultBranch?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stars?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumRepositoryStatusFieldUpdateOperationsInput | $Enums.RepositoryStatus
+  lastIndexedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sandboxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutRepositoriesNestedInput
+}
+
+export type RepositoryUncheckedUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  owner?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultBranch?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stars?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumRepositoryStatusFieldUpdateOperationsInput | $Enums.RepositoryStatus
+  lastIndexedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sandboxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type RepositoryCreateManyUserInput = {
   id?: string
   name: string
@@ -755,6 +871,7 @@ export type RepositoryUpdateWithoutUserInput = {
   sandboxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUpdateManyWithoutRepositoryNestedInput
 }
 
 export type RepositoryUncheckedUpdateWithoutUserInput = {
@@ -772,6 +889,7 @@ export type RepositoryUncheckedUpdateWithoutUserInput = {
   sandboxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutRepositoryNestedInput
 }
 
 export type RepositoryUncheckedUpdateManyWithoutUserInput = {
@@ -792,6 +910,35 @@ export type RepositoryUncheckedUpdateManyWithoutUserInput = {
 }
 
 
+/**
+ * Count Type RepositoryCountOutputType
+ */
+
+export type RepositoryCountOutputType = {
+  messages: number
+}
+
+export type RepositoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  messages?: boolean | RepositoryCountOutputTypeCountMessagesArgs
+}
+
+/**
+ * RepositoryCountOutputType without action
+ */
+export type RepositoryCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RepositoryCountOutputType
+   */
+  select?: Prisma.RepositoryCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * RepositoryCountOutputType without action
+ */
+export type RepositoryCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageWhereInput
+}
+
 
 export type RepositorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -810,6 +957,8 @@ export type RepositorySelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  messages?: boolean | Prisma.Repository$messagesArgs<ExtArgs>
+  _count?: boolean | Prisma.RepositoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["repository"]>
 
 export type RepositorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -871,6 +1020,8 @@ export type RepositorySelectScalar = {
 export type RepositoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "owner" | "url" | "description" | "defaultBranch" | "language" | "stars" | "status" | "lastIndexedAt" | "errorMessage" | "sandboxId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["repository"]>
 export type RepositoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  messages?: boolean | Prisma.Repository$messagesArgs<ExtArgs>
+  _count?: boolean | Prisma.RepositoryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RepositoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -883,6 +1034,7 @@ export type $RepositoryPayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "Repository"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    messages: Prisma.$MessagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1295,6 +1447,7 @@ readonly fields: RepositoryFieldRefs;
 export interface Prisma__RepositoryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  messages<T extends Prisma.Repository$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Repository$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1737,6 +1890,30 @@ export type RepositoryDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Limit how many Repositories to delete.
    */
   limit?: number
+}
+
+/**
+ * Repository.messages
+ */
+export type Repository$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Message
+   */
+  select?: Prisma.MessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Message
+   */
+  omit?: Prisma.MessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null
+  where?: Prisma.MessageWhereInput
+  orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[]
+  cursor?: Prisma.MessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
 }
 
 /**

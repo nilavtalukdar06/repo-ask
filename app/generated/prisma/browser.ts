@@ -47,3 +47,8 @@ export type Profile = Prisma.ProfileModel
  * 
  */
 export type Repository = Prisma.RepositoryModel
+/**
+ * Model Message
+ * 
+ */
+export type Message = Prisma.MessageModel
