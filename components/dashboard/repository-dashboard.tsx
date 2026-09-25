@@ -90,7 +90,7 @@ function DeleteRepositoryButton({
 
 function AddRepositoryButton() {
   return (
-    <AddRepositoryDialog renderTrigger={<Button size="sm" className="gap-2" />}>
+    <AddRepositoryDialog renderTrigger={<Button className="gap-2" />}>
       <PlusIcon />
       Add repository
     </AddRepositoryDialog>
@@ -313,7 +313,7 @@ export function RepositoryDashboard({
           aria-busy={isChangingResults}
         >
           {repositories.map((repository) => (
-            <Card key={repository.id} className={cn(GLASS_CLASSNAME)}>
+            <Card key={repository.id} className={cn(GLASS_CLASSNAME, "h-full")}>
               {repository.status === "INDEXING" && (
                 <RepositoryRealtimeSync repositoryId={repository.id} />
               )}
@@ -327,7 +327,7 @@ export function RepositoryDashboard({
                   </CardDescription>
                 )}
               </CardHeader>
-              <CardContent className="flex flex-col gap-2">
+              <CardContent className="flex flex-col h-full gap-2">
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                   {repository.language && <span>{repository.language}</span>}
                   {repository.stars !== null && (
@@ -342,7 +342,7 @@ export function RepositoryDashboard({
                   lastIndexedAt={repository.lastIndexedAt}
                 />
               </CardContent>
-              <CardFooter className="justify-between gap-2">
+              <CardFooter className="justify-between h-fit gap-2">
                 <Button
                   size="sm"
                   variant="outline"
