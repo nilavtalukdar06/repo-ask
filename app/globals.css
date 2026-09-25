@@ -2,6 +2,14 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Streamdown's code-block renderer emits Shiki syntax-highlighting colors as
+   dynamic-value Tailwind classes (e.g. text-[var(--sdm-c,inherit)]) from its
+   compiled output in node_modules, which Tailwind's automatic content
+   detection doesn't scan by default — without this, every token silently
+   falls back to inherited text color and code blocks render with no
+   highlighting at all. */
+@source "../node_modules/streamdown/dist/**/*.js";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

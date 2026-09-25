@@ -22,9 +22,9 @@ export default async function DashboardLayout({
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className="h-svh">
       <AppSidebar user={session.user} />
-      <SidebarInset className="border shadow-none">
+      <SidebarInset className="min-h-0 border shadow-none">
         <ChatHeaderProvider>
           <header className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
             <SidebarTrigger />
