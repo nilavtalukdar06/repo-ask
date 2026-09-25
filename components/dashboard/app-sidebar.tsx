@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboardIcon, PlusIcon } from "lucide-react";
-
 import { fakeRepositories } from "@/lib/fake-repositories";
 import { GitHubIcon } from "@/components/icons/github";
+import { AddRepositoryDialog } from "@/components/dashboard/add-repository-dialog";
 import { RepositoryMenuItem } from "@/components/dashboard/repository-menu-item";
 import { NavUser } from "@/components/dashboard/nav-user";
 import { Button } from "@/components/ui/button";
@@ -57,10 +57,14 @@ export function AppSidebar({ user }: AppSidebarProps) {
           </SidebarMenuItem>
         </SidebarMenu>
 
-        <Button className="w-full justify-start items-center gap-2">
+        <AddRepositoryDialog
+          renderTrigger={
+            <Button className="w-full justify-start items-center gap-2" />
+          }
+        >
           <PlusIcon />
           Add repository
-        </Button>
+        </AddRepositoryDialog>
       </SidebarHeader>
 
       <SidebarContent>
