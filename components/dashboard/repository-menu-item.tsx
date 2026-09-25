@@ -7,8 +7,7 @@ import { cn } from "@/lib/utils";
 import type { RepositoryRecord } from "@/lib/queries/repository";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { GLASS_CLASSNAME } from "@/components/dashboard/glass";
-import { RepositoryRealtimeSync } from "@/components/dashboard/repository-realtime-sync";
-import { RepositoryStatus } from "@/components/dashboard/repository-status";
+import { RepositoryStatusLive } from "@/components/dashboard/repository-status-live";
 
 export function RepositoryMenuItem({
   repository,
@@ -22,9 +21,6 @@ export function RepositoryMenuItem({
 
   return (
     <SidebarMenuItem>
-      {repository.status === "INDEXING" && (
-        <RepositoryRealtimeSync repositoryId={repository.id} />
-      )}
       <SidebarMenuButton
         isActive={isActive}
         className={cn(
@@ -38,10 +34,7 @@ export function RepositoryMenuItem({
           <span className="truncate font-medium">
             {repository.owner}/{repository.name}
           </span>
-          <RepositoryStatus
-            status={repository.status}
-            lastIndexedAt={repository.lastIndexedAt}
-          />
+          <RepositoryStatusLive repository={repository} />
         </span>
       </SidebarMenuButton>
     </SidebarMenuItem>

@@ -83,14 +83,25 @@ export const indexRepository = inngest.createFunction(
   async ({ event, step }) => {
     const { repositoryId, githubUrl } = event.data;
 
-    const emit = async (id: string, stage: string, message?: string) => {
+    const emit = async (
+      id: string,
+      stage: string,
+      message?: string,
+      progress?: number,
+    ) => {
       await step.realtime.publish(id, repositoryChannel(repositoryId).status, {
         repositoryId,
         stage,
         status: "INDEXING" as const,
         message,
+        progress,
       });
     };
+
+    // Pre-batch pipeline stages don't map to a chunk count, so they're given
+    // fixed progress checkpoints. Batch progress is then scaled across the
+    // remaining range up to 100.
+    const PRE_BATCH_PROGRESS = 15;
 
     const sandboxId = await step.run("create-sandbox", async () => {
       const sandbox = await Sandbox.create({ timeoutMs: SANDBOX_TIMEOUT_MS });
@@ -101,7 +112,7 @@ export const indexRepository = inngest.createFunction(
       return sandbox.sandboxId;
     });
 
-    await emit("emit-sandbox-created", "Sandbox created");
+    await emit("emit-sandbox-created", "Sandbox created", undefined, 5);
 
     await step.run("clone-repository", async () => {
       const sandbox = await Sandbox.connect(sandboxId);
@@ -111,7 +122,7 @@ export const indexRepository = inngest.createFunction(
       );
     });
 
-    await emit("emit-repository-cloned", "Repository cloned");
+    await emit("emit-repository-cloned", "Repository cloned", undefined, 10);
 
     const filesToIndex = await step.run(
       "discover-and-filter-files",
@@ -148,6 +159,8 @@ export const indexRepository = inngest.createFunction(
     await emit(
       "emit-files-discovered",
       `Discovered ${filesToIndex.length} files to index`,
+      undefined,
+      PRE_BATCH_PROGRESS,
     );
 
     const batches = batchFiles(
@@ -239,9 +252,17 @@ export const indexRepository = inngest.createFunction(
 
       totalChunks += chunkCount;
 
+      const batchProgress =
+        PRE_BATCH_PROGRESS +
+        Math.round(
+          ((batchIndex + 1) / batches.length) * (100 - PRE_BATCH_PROGRESS),
+        );
+
       await emit(
         `emit-batch-progress-${batchIndex}`,
         `Indexed batch ${batchIndex + 1} of ${batches.length}`,
+        undefined,
+        batchProgress,
       );
     }
 
@@ -267,6 +288,7 @@ export const indexRepository = inngest.createFunction(
         stage: "indexed",
         status: "INDEXED" as const,
         message: `Indexed ${totalChunks} chunks across ${filesToIndex.length} files.`,
+        progress: 100,
       },
     );
 

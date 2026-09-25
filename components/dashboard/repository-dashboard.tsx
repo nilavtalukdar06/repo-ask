@@ -28,8 +28,7 @@ import {
 
 import { AddRepositoryDialog } from "@/components/dashboard/add-repository-dialog";
 import { GLASS_CLASSNAME } from "@/components/dashboard/glass";
-import { RepositoryRealtimeSync } from "@/components/dashboard/repository-realtime-sync";
-import { RepositoryStatus } from "@/components/dashboard/repository-status";
+import { RepositoryStatusLive } from "@/components/dashboard/repository-status-live";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -314,9 +313,6 @@ export function RepositoryDashboard({
         >
           {repositories.map((repository) => (
             <Card key={repository.id} className={cn(GLASS_CLASSNAME, "h-full")}>
-              {repository.status === "INDEXING" && (
-                <RepositoryRealtimeSync repositoryId={repository.id} />
-              )}
               <CardHeader>
                 <CardTitle className="truncate">
                   {repository.owner}/{repository.name}
@@ -337,10 +333,7 @@ export function RepositoryDashboard({
                     </span>
                   )}
                 </div>
-                <RepositoryStatus
-                  status={repository.status}
-                  lastIndexedAt={repository.lastIndexedAt}
-                />
+                <RepositoryStatusLive repository={repository} />
               </CardContent>
               <CardFooter className="justify-between h-fit gap-2">
                 <Button

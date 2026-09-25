@@ -8,14 +8,12 @@ import { getRepositoryStatusToken } from "@/server/repository-realtime";
 import { repositoryChannel } from "@/lib/inngest-channels";
 import { repositoriesQueryKey } from "@/lib/queries/repository";
 
-// Mounted only while a repository's status is INDEXING. Subscribes to its
-// realtime channel and refetches the repositories list once the pipeline
-// reaches a terminal status, so the card/menu item picks up INDEXED/FAILED
-// without polling.
 export function RepositoryRealtimeSync({
   repositoryId,
+  onProgress,
 }: {
   repositoryId: string;
+  onProgress?: (progress: number | undefined) => void;
 }) {
   const queryClient = useQueryClient();
 
@@ -25,20 +23,21 @@ export function RepositoryRealtimeSync({
     token: () => getRepositoryStatusToken(repositoryId),
   });
 
-  // The library's generic inference for a parametric channel + topics tuple
-  // doesn't flow `data` to the schema type, so it comes back as `unknown`.
-  // The shape is guaranteed at runtime by the zod schema on the channel
-  // (server-side publish validates against it), so a targeted cast is safe
-  // here.
-  const latestStatus = (
-    messages.last?.data as { status?: "INDEXING" | "INDEXED" | "FAILED" }
-  )?.status;
+  const latest = messages.last?.data as
+    | { status?: "INDEXING" | "INDEXED" | "FAILED"; progress?: number }
+    | undefined;
+  const latestStatus = latest?.status;
+  const latestProgress = latest?.progress;
 
   React.useEffect(() => {
     if (latestStatus === "INDEXED" || latestStatus === "FAILED") {
       queryClient.invalidateQueries({ queryKey: repositoriesQueryKey });
     }
   }, [latestStatus, queryClient]);
+
+  React.useEffect(() => {
+    onProgress?.(latestProgress);
+  }, [latestProgress, onProgress]);
 
   return null;
 }
