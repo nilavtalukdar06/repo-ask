@@ -1,9 +1,10 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { AlertTriangleIcon, CopyIcon, RefreshCcwIcon } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   Conversation,
@@ -18,6 +19,7 @@ import {
   MessageContent,
   MessageResponse,
 } from "@/components/ai-elements/message";
+import { useChatHeaderContext } from "@/components/chat/chat-header-context";
 import { PromptInput } from "@/components/chat/prompt-input";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { Suggestion } from "@/components/ai-elements/suggestion";
@@ -46,18 +48,26 @@ export function ChatView({
   initialMessages: UIMessage[];
 }) {
   const [input, setInput] = useState("");
+  const { registerClearHandler } = useChatHeaderContext();
 
-  const { messages, sendMessage, status, error, regenerate, clearError } =
-    useChat({
-      id: repository.id,
-      messages: initialMessages,
-      transport: new DefaultChatTransport({
-        api: "/api/chat",
-        prepareSendMessagesRequest({ messages, id }) {
-          return { body: { message: messages[messages.length - 1], id } };
-        },
-      }),
-    });
+  const {
+    messages,
+    sendMessage,
+    status,
+    error,
+    regenerate,
+    clearError,
+    setMessages,
+  } = useChat({
+    id: repository.id,
+    messages: initialMessages,
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+      prepareSendMessagesRequest({ messages, id }) {
+        return { body: { message: messages[messages.length - 1], id } };
+      },
+    }),
+  });
 
   const handleSubmit = () => {
     if (!input.trim()) return;
@@ -69,6 +79,20 @@ export function ChatView({
     clearError();
     regenerate();
   };
+
+  useEffect(() => {
+    return registerClearHandler(async () => {
+      const response = await fetch(`/api/chat/clear/${repository.id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        toast.error("Failed to clear chat.");
+        return;
+      }
+      clearError();
+      setMessages([]);
+    });
+  }, [registerClearHandler, repository.id, clearError, setMessages]);
 
   const isThinking = status === "submitted";
 

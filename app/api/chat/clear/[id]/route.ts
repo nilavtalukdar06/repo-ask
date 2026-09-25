@@ -3,9 +3,6 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import pinecone from "@/lib/pinecone";
-
-const PINECONE_INDEX_NAME = process.env.PINEC0NE_INDEX_NAME!;
 
 export async function DELETE(
   _request: Request,
@@ -34,27 +31,16 @@ export async function DELETE(
       );
     }
 
-    // Best-effort: the repository may have failed to index (or is mid-index),
-    // in which case its namespace never existed — don't let that block deletion.
-    try {
-      await pinecone.index({ name: PINECONE_INDEX_NAME }).deleteNamespace(id);
-    } catch (error) {
-      console.error(
-        `Failed to delete Pinecone namespace for repository ${id}`,
-        error,
-      );
-    }
-
-    await prisma.repository.delete({ where: { id } });
+    await prisma.message.deleteMany({ where: { repositoryId: id } });
 
     return NextResponse.json(
-      { message: "repository deleted successfully" },
+      { message: "chat cleared successfully" },
       { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: "failed to delete repository" },
+      { message: "failed to clear chat" },
       { status: 500 },
     );
   }
