@@ -4,12 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
-import { formatRelativeTime } from "@/lib/format-relative-time";
-import type { Repository } from "@/lib/fake-repositories";
+import type { RepositoryRecord } from "@/lib/queries/repository";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { GLASS_CLASSNAME } from "@/components/dashboard/glass";
+import { RepositoryRealtimeSync } from "@/components/dashboard/repository-realtime-sync";
+import { RepositoryStatus } from "@/components/dashboard/repository-status";
 
-export function RepositoryMenuItem({ repository }: { repository: Repository }) {
+export function RepositoryMenuItem({
+  repository,
+}: {
+  repository: RepositoryRecord;
+}) {
   const pathname = usePathname();
 
   const href = `/chat/${repository.id}`;
@@ -17,6 +22,9 @@ export function RepositoryMenuItem({ repository }: { repository: Repository }) {
 
   return (
     <SidebarMenuItem>
+      {repository.status === "INDEXING" && (
+        <RepositoryRealtimeSync repositoryId={repository.id} />
+      )}
       <SidebarMenuButton
         isActive={isActive}
         className={cn(
@@ -27,25 +35,13 @@ export function RepositoryMenuItem({ repository }: { repository: Repository }) {
         render={<Link href={href} />}
       >
         <span className="flex min-w-0 flex-1 flex-col gap-1.5">
-          <span className="truncate font-medium">{repository.name}</span>
-          {repository.status === "indexing" && (
-            <span className="animate-pulse text-xs text-amber-600 dark:text-amber-500">
-              Indexing...
-            </span>
-          )}
-          {repository.status === "failed" && (
-            <span className="text-xs text-red-600 dark:text-red-500">
-              Failed to index
-            </span>
-          )}
-          {repository.status === "indexed" && (
-            <span className="text-xs text-muted-foreground">
-              <span className="text-emerald-600 dark:text-emerald-500">
-                Indexed
-              </span>{" "}
-              · {formatRelativeTime(repository.indexedAt)}
-            </span>
-          )}
+          <span className="truncate font-medium">
+            {repository.owner}/{repository.name}
+          </span>
+          <RepositoryStatus
+            status={repository.status}
+            lastIndexedAt={repository.lastIndexedAt}
+          />
         </span>
       </SidebarMenuButton>
     </SidebarMenuItem>

@@ -1,4 +1,5 @@
 import redis from "@/lib/redis";
+import { secret } from "@/lib/secret";
 
 function cacheKey(userId: string) {
   return `openai-api-key:${userId}`;
@@ -14,4 +15,29 @@ export async function setCachedApiKey(userId: string, apiKey: string) {
 
 export async function deleteCachedApiKey(userId: string) {
   await redis.del(cacheKey(userId));
+}
+
+// Cache-first lookup of a user's OpenAI API key, falling back to Infisical
+// (the source of truth) on a miss and repopulating the cache. Shared by the
+// /api/openai/get route and the repository indexing pipeline so both benefit
+// from the same cache.
+export async function getApiKeyForUser(userId: string): Promise<string> {
+  const cached = await getCachedApiKey(userId);
+  if (cached) {
+    return cached;
+  }
+
+  await secret.auth().universalAuth.login({
+    clientId: process.env.CLIENT_ID!,
+    clientSecret: process.env.CLIENT_SECRET!,
+  });
+  const result = await secret.secrets().getSecret({
+    environment: "dev",
+    projectId: process.env.PROJECT_ID!,
+    secretName: `API_KEY_${userId}`,
+  });
+
+  await setCachedApiKey(userId, result.secretValue);
+
+  return result.secretValue;
 }

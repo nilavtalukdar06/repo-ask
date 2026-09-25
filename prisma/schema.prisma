@@ -103,6 +103,7 @@ model Repository {
   status        RepositoryStatus @default(INDEXING)
   lastIndexedAt DateTime?
   errorMessage  String?
+  sandboxId     String?
   userId        String
   user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime         @default(now())

@@ -988,6 +988,7 @@ export const RepositoryScalarFieldEnum = {
   status: 'status',
   lastIndexedAt: 'lastIndexedAt',
   errorMessage: 'errorMessage',
+  sandboxId: 'sandboxId',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

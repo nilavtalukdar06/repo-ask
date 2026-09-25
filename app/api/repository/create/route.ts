@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { addRepositorySchema } from "@/app/api/repository/schema";
 import { Prisma } from "@/app/generated/prisma/client";
 import { auth } from "@/lib/auth";
+import { inngest } from "@/lib/inngest";
 import { parseGithubUrl } from "@/lib/parse-github-url";
 import prisma from "@/lib/prisma";
 
@@ -97,13 +98,13 @@ export async function POST(request: NextRequest) {
       }
       throw error;
     }
-    console.log("[repository.index] would trigger inngest workflow with:", {
-      repositoryId: repository.id,
-      owner: repository.owner,
-      name: repository.name,
-      url: repository.url,
-      defaultBranch: repository.defaultBranch,
-      userId: repository.userId,
+    await inngest.send({
+      name: "repository/index.requested",
+      data: {
+        repositoryId: repository.id,
+        userId: repository.userId,
+        githubUrl: repository.url,
+      },
     });
 
     return NextResponse.json({ repository }, { status: 201 });

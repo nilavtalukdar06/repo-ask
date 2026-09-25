@@ -16,7 +16,6 @@ import { debounce, useQueryStates } from "nuqs";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
-import { formatRelativeTime } from "@/lib/format-relative-time";
 import {
   REPOSITORY_SEARCH_MAX_LENGTH,
   repositoriesSearchParams,
@@ -29,6 +28,8 @@ import {
 
 import { AddRepositoryDialog } from "@/components/dashboard/add-repository-dialog";
 import { GLASS_CLASSNAME } from "@/components/dashboard/glass";
+import { RepositoryRealtimeSync } from "@/components/dashboard/repository-realtime-sync";
+import { RepositoryStatus } from "@/components/dashboard/repository-status";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -53,41 +54,6 @@ import {
 } from "@/components/ui/input-group";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
-
-function RepositoryStatus({
-  status,
-  lastIndexedAt,
-}: {
-  status: RepositoryRecord["status"];
-  lastIndexedAt: string | null;
-}) {
-  if (status === "INDEXING") {
-    return (
-      <span className="animate-pulse text-xs font-medium text-amber-600 dark:text-amber-500">
-        Indexing...
-      </span>
-    );
-  }
-
-  if (status === "FAILED") {
-    return (
-      <span className="text-xs font-medium text-red-600 dark:text-red-500">
-        Failed to index
-      </span>
-    );
-  }
-
-  return (
-    <span className="text-xs text-muted-foreground">
-      <span className="font-medium text-emerald-600 dark:text-emerald-500">
-        Indexed
-      </span>
-      {lastIndexedAt
-        ? ` · ${formatRelativeTime(new Date(lastIndexedAt))}`
-        : null}
-    </span>
-  );
-}
 
 function DeleteRepositoryButton({
   repository,
@@ -348,6 +314,9 @@ export function RepositoryDashboard({
         >
           {repositories.map((repository) => (
             <Card key={repository.id} className={cn(GLASS_CLASSNAME)}>
+              {repository.status === "INDEXING" && (
+                <RepositoryRealtimeSync repositoryId={repository.id} />
+              )}
               <CardHeader>
                 <CardTitle className="truncate">
                   {repository.owner}/{repository.name}

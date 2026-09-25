@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboardIcon, PlusIcon } from "lucide-react";
-import { fakeRepositories } from "@/lib/fake-repositories";
+import { useRepositoriesQuery } from "@/lib/queries/repository";
 import { GitHubIcon } from "@/components/icons/github";
 import { AddRepositoryDialog } from "@/components/dashboard/add-repository-dialog";
 import { RepositoryMenuItem } from "@/components/dashboard/repository-menu-item";
@@ -33,6 +33,8 @@ type AppSidebarProps = {
 
 export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname();
+  const { data } = useRepositoriesQuery({ page: 1, search: "" });
+  const repositories = data?.repositories ?? [];
 
   return (
     <Sidebar variant="inset">
@@ -72,7 +74,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
           <SidebarGroupLabel>Repositories</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {fakeRepositories.map((repository) => (
+              {repositories.map((repository) => (
                 <RepositoryMenuItem
                   key={repository.id}
                   repository={repository}

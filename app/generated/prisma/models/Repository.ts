@@ -46,6 +46,7 @@ export type RepositoryMinAggregateOutputType = {
   status: $Enums.RepositoryStatus | null
   lastIndexedAt: Date | null
   errorMessage: string | null
+  sandboxId: string | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -63,6 +64,7 @@ export type RepositoryMaxAggregateOutputType = {
   status: $Enums.RepositoryStatus | null
   lastIndexedAt: Date | null
   errorMessage: string | null
+  sandboxId: string | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -80,6 +82,7 @@ export type RepositoryCountAggregateOutputType = {
   status: number
   lastIndexedAt: number
   errorMessage: number
+  sandboxId: number
   userId: number
   createdAt: number
   updatedAt: number
@@ -107,6 +110,7 @@ export type RepositoryMinAggregateInputType = {
   status?: true
   lastIndexedAt?: true
   errorMessage?: true
+  sandboxId?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -124,6 +128,7 @@ export type RepositoryMaxAggregateInputType = {
   status?: true
   lastIndexedAt?: true
   errorMessage?: true
+  sandboxId?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -141,6 +146,7 @@ export type RepositoryCountAggregateInputType = {
   status?: true
   lastIndexedAt?: true
   errorMessage?: true
+  sandboxId?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -245,6 +251,7 @@ export type RepositoryGroupByOutputType = {
   status: $Enums.RepositoryStatus
   lastIndexedAt: Date | null
   errorMessage: string | null
+  sandboxId: string | null
   userId: string
   createdAt: Date
   updatedAt: Date
@@ -285,6 +292,7 @@ export type RepositoryWhereInput = {
   status?: Prisma.EnumRepositoryStatusFilter<"Repository"> | $Enums.RepositoryStatus
   lastIndexedAt?: Prisma.DateTimeNullableFilter<"Repository"> | Date | string | null
   errorMessage?: Prisma.StringNullableFilter<"Repository"> | string | null
+  sandboxId?: Prisma.StringNullableFilter<"Repository"> | string | null
   userId?: Prisma.StringFilter<"Repository"> | string
   createdAt?: Prisma.DateTimeFilter<"Repository"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Repository"> | Date | string
@@ -303,6 +311,7 @@ export type RepositoryOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   lastIndexedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   errorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  sandboxId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -325,6 +334,7 @@ export type RepositoryWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumRepositoryStatusFilter<"Repository"> | $Enums.RepositoryStatus
   lastIndexedAt?: Prisma.DateTimeNullableFilter<"Repository"> | Date | string | null
   errorMessage?: Prisma.StringNullableFilter<"Repository"> | string | null
+  sandboxId?: Prisma.StringNullableFilter<"Repository"> | string | null
   userId?: Prisma.StringFilter<"Repository"> | string
   createdAt?: Prisma.DateTimeFilter<"Repository"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Repository"> | Date | string
@@ -343,6 +353,7 @@ export type RepositoryOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   lastIndexedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   errorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  sandboxId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -368,6 +379,7 @@ export type RepositoryScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumRepositoryStatusWithAggregatesFilter<"Repository"> | $Enums.RepositoryStatus
   lastIndexedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Repository"> | Date | string | null
   errorMessage?: Prisma.StringNullableWithAggregatesFilter<"Repository"> | string | null
+  sandboxId?: Prisma.StringNullableWithAggregatesFilter<"Repository"> | string | null
   userId?: Prisma.StringWithAggregatesFilter<"Repository"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Repository"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Repository"> | Date | string
@@ -385,6 +397,7 @@ export type RepositoryCreateInput = {
   status?: $Enums.RepositoryStatus
   lastIndexedAt?: Date | string | null
   errorMessage?: string | null
+  sandboxId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRepositoriesInput
@@ -402,6 +415,7 @@ export type RepositoryUncheckedCreateInput = {
   status?: $Enums.RepositoryStatus
   lastIndexedAt?: Date | string | null
   errorMessage?: string | null
+  sandboxId?: string | null
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -419,6 +433,7 @@ export type RepositoryUpdateInput = {
   status?: Prisma.EnumRepositoryStatusFieldUpdateOperationsInput | $Enums.RepositoryStatus
   lastIndexedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sandboxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRepositoriesNestedInput
@@ -436,6 +451,7 @@ export type RepositoryUncheckedUpdateInput = {
   status?: Prisma.EnumRepositoryStatusFieldUpdateOperationsInput | $Enums.RepositoryStatus
   lastIndexedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sandboxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -453,6 +469,7 @@ export type RepositoryCreateManyInput = {
   status?: $Enums.RepositoryStatus
   lastIndexedAt?: Date | string | null
   errorMessage?: string | null
+  sandboxId?: string | null
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -470,6 +487,7 @@ export type RepositoryUpdateManyMutationInput = {
   status?: Prisma.EnumRepositoryStatusFieldUpdateOperationsInput | $Enums.RepositoryStatus
   lastIndexedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sandboxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -486,6 +504,7 @@ export type RepositoryUncheckedUpdateManyInput = {
   status?: Prisma.EnumRepositoryStatusFieldUpdateOperationsInput | $Enums.RepositoryStatus
   lastIndexedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sandboxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -519,6 +538,7 @@ export type RepositoryCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   lastIndexedAt?: Prisma.SortOrder
   errorMessage?: Prisma.SortOrder
+  sandboxId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -540,6 +560,7 @@ export type RepositoryMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   lastIndexedAt?: Prisma.SortOrder
   errorMessage?: Prisma.SortOrder
+  sandboxId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -557,6 +578,7 @@ export type RepositoryMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   lastIndexedAt?: Prisma.SortOrder
   errorMessage?: Prisma.SortOrder
+  sandboxId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -632,6 +654,7 @@ export type RepositoryCreateWithoutUserInput = {
   status?: $Enums.RepositoryStatus
   lastIndexedAt?: Date | string | null
   errorMessage?: string | null
+  sandboxId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -648,6 +671,7 @@ export type RepositoryUncheckedCreateWithoutUserInput = {
   status?: $Enums.RepositoryStatus
   lastIndexedAt?: Date | string | null
   errorMessage?: string | null
+  sandboxId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -693,6 +717,7 @@ export type RepositoryScalarWhereInput = {
   status?: Prisma.EnumRepositoryStatusFilter<"Repository"> | $Enums.RepositoryStatus
   lastIndexedAt?: Prisma.DateTimeNullableFilter<"Repository"> | Date | string | null
   errorMessage?: Prisma.StringNullableFilter<"Repository"> | string | null
+  sandboxId?: Prisma.StringNullableFilter<"Repository"> | string | null
   userId?: Prisma.StringFilter<"Repository"> | string
   createdAt?: Prisma.DateTimeFilter<"Repository"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Repository"> | Date | string
@@ -710,6 +735,7 @@ export type RepositoryCreateManyUserInput = {
   status?: $Enums.RepositoryStatus
   lastIndexedAt?: Date | string | null
   errorMessage?: string | null
+  sandboxId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -726,6 +752,7 @@ export type RepositoryUpdateWithoutUserInput = {
   status?: Prisma.EnumRepositoryStatusFieldUpdateOperationsInput | $Enums.RepositoryStatus
   lastIndexedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sandboxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -742,6 +769,7 @@ export type RepositoryUncheckedUpdateWithoutUserInput = {
   status?: Prisma.EnumRepositoryStatusFieldUpdateOperationsInput | $Enums.RepositoryStatus
   lastIndexedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sandboxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -758,6 +786,7 @@ export type RepositoryUncheckedUpdateManyWithoutUserInput = {
   status?: Prisma.EnumRepositoryStatusFieldUpdateOperationsInput | $Enums.RepositoryStatus
   lastIndexedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sandboxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -776,6 +805,7 @@ export type RepositorySelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   status?: boolean
   lastIndexedAt?: boolean
   errorMessage?: boolean
+  sandboxId?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -794,6 +824,7 @@ export type RepositorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   status?: boolean
   lastIndexedAt?: boolean
   errorMessage?: boolean
+  sandboxId?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -812,6 +843,7 @@ export type RepositorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   status?: boolean
   lastIndexedAt?: boolean
   errorMessage?: boolean
+  sandboxId?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -830,12 +862,13 @@ export type RepositorySelectScalar = {
   status?: boolean
   lastIndexedAt?: boolean
   errorMessage?: boolean
+  sandboxId?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type RepositoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "owner" | "url" | "description" | "defaultBranch" | "language" | "stars" | "status" | "lastIndexedAt" | "errorMessage" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["repository"]>
+export type RepositoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "owner" | "url" | "description" | "defaultBranch" | "language" | "stars" | "status" | "lastIndexedAt" | "errorMessage" | "sandboxId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["repository"]>
 export type RepositoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -863,6 +896,7 @@ export type $RepositoryPayload<ExtArgs extends runtime.Types.Extensions.Internal
     status: $Enums.RepositoryStatus
     lastIndexedAt: Date | null
     errorMessage: string | null
+    sandboxId: string | null
     userId: string
     createdAt: Date
     updatedAt: Date
@@ -1301,6 +1335,7 @@ export interface RepositoryFieldRefs {
   readonly status: Prisma.FieldRef<"Repository", 'RepositoryStatus'>
   readonly lastIndexedAt: Prisma.FieldRef<"Repository", 'DateTime'>
   readonly errorMessage: Prisma.FieldRef<"Repository", 'String'>
+  readonly sandboxId: Prisma.FieldRef<"Repository", 'String'>
   readonly userId: Prisma.FieldRef<"Repository", 'String'>
   readonly createdAt: Prisma.FieldRef<"Repository", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Repository", 'DateTime'>
