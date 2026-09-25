@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { formatRelativeTime } from "@/lib/format-relative-time";
 import type { Repository } from "@/lib/fake-repositories";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { SIDEBAR_GLASS_CLASSNAME } from "@/components/dashboard/glass";
+import { GLASS_CLASSNAME } from "@/components/dashboard/glass";
 
 export function RepositoryMenuItem({ repository }: { repository: Repository }) {
   const pathname = usePathname();
@@ -21,7 +21,7 @@ export function RepositoryMenuItem({ repository }: { repository: Repository }) {
         isActive={isActive}
         className={cn(
           "h-auto py-2 border",
-          isActive && SIDEBAR_GLASS_CLASSNAME,
+          isActive && GLASS_CLASSNAME,
           isActive ? "border/60!" : "border-transparent",
         )}
         render={<Link href={href} />}

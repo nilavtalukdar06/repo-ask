@@ -15,7 +15,7 @@ import {
 
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { SIDEBAR_GLASS_CLASSNAME } from "@/components/dashboard/glass";
+import { GLASS_CLASSNAME } from "@/components/dashboard/glass";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -97,7 +97,7 @@ export function NavUser({ user }: NavUserProps) {
               aria-hidden="true"
               className={cn(
                 "pointer-events-none absolute inset-0 rounded-lg",
-                SIDEBAR_GLASS_CLASSNAME,
+                GLASS_CLASSNAME,
               )}
             />
             <span className="relative z-10 flex w-full items-center gap-2">

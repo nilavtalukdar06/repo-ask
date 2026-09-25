@@ -67,3 +67,23 @@ export function useCreateRepositoryMutation() {
     },
   });
 }
+
+export function useDeleteRepositoryMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/repository/delete/${id}`, {
+        method: "DELETE",
+      });
+      const data = await parseJson(response);
+      if (!response.ok) {
+        throw new Error(data.message ?? "Failed to delete repository.");
+      }
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: repositoriesQueryKey });
+    },
+  });
+}

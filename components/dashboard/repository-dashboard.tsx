@@ -1,19 +1,31 @@
 "use client";
 
-import { GitForkIcon, PlusIcon, StarIcon } from "lucide-react";
+import Link from "next/link";
+import {
+  GitForkIcon,
+  MessageSquareIcon,
+  PlusIcon,
+  StarIcon,
+  Trash2Icon,
+} from "lucide-react";
+import { toast } from "sonner";
 
+import { cn } from "@/lib/utils";
 import { formatRelativeTime } from "@/lib/format-relative-time";
 import {
+  useDeleteRepositoryMutation,
   useRepositoriesQuery,
   type RepositoryRecord,
 } from "@/lib/queries/repository";
 
 import { AddRepositoryDialog } from "@/components/dashboard/add-repository-dialog";
+import { GLASS_CLASSNAME } from "@/components/dashboard/glass";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -26,6 +38,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 
 function RepositoryStatus({
   status,
@@ -59,6 +72,39 @@ function RepositoryStatus({
         ? ` · ${formatRelativeTime(new Date(lastIndexedAt))}`
         : null}
     </span>
+  );
+}
+
+function DeleteRepositoryButton({
+  repository,
+}: {
+  repository: RepositoryRecord;
+}) {
+  const deleteMutation = useDeleteRepositoryMutation();
+
+  function handleDelete() {
+    deleteMutation.mutate(repository.id, {
+      onSuccess: () => {
+        toast.success("Repository removed.");
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+  }
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon-sm"
+      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+      onClick={handleDelete}
+      disabled={deleteMutation.isPending}
+      aria-label={`Delete ${repository.owner}/${repository.name}`}
+    >
+      {deleteMutation.isPending ? <Spinner /> : <Trash2Icon />}
+    </Button>
   );
 }
 
@@ -138,7 +184,7 @@ export function RepositoryDashboard({
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {repositories.map((repository) => (
-          <Card key={repository.id}>
+          <Card key={repository.id} className={cn(GLASS_CLASSNAME)}>
             <CardHeader>
               <CardTitle className="truncate">
                 {repository.owner}/{repository.name}
@@ -164,6 +210,19 @@ export function RepositoryDashboard({
                 lastIndexedAt={repository.lastIndexedAt}
               />
             </CardContent>
+            <CardFooter className="justify-between gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-1.5"
+                nativeButton={false}
+                render={<Link href={`/chat/${repository.id}`} />}
+              >
+                <MessageSquareIcon />
+                Open
+              </Button>
+              <DeleteRepositoryButton repository={repository} />
+            </CardFooter>
           </Card>
         ))}
       </div>
