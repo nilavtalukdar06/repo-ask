@@ -66,3 +66,8 @@ export type Verification = Prisma.VerificationModel
  * 
  */
 export type Profile = Prisma.ProfileModel
+/**
+ * Model Repository
+ * 
+ */
+export type Repository = Prisma.RepositoryModel

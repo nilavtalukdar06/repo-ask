@@ -55,7 +55,8 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
-  Profile: 'Profile'
+  Profile: 'Profile',
+  Repository: 'Repository'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -143,6 +144,26 @@ export const ProfileScalarFieldEnum = {
 } as const
 
 export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
+
+
+export const RepositoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  owner: 'owner',
+  url: 'url',
+  description: 'description',
+  defaultBranch: 'defaultBranch',
+  language: 'language',
+  stars: 'stars',
+  status: 'status',
+  lastIndexedAt: 'lastIndexedAt',
+  errorMessage: 'errorMessage',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RepositoryScalarFieldEnum = (typeof RepositoryScalarFieldEnum)[keyof typeof RepositoryScalarFieldEnum]
 
 
 export const SortOrder = {
