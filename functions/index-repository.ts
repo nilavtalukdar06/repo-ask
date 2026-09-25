@@ -1,16 +1,11 @@
 import { Sandbox } from "e2b";
 import { inngest } from "@/lib/inngest";
 import { repositoryChannel } from "@/lib/inngest-channels";
-import { getApiKeyForUser } from "@/lib/openai-key-cache";
 import pinecone from "@/lib/pinecone";
 import prisma from "@/lib/prisma";
 import { batchFiles } from "@/lib/repository-indexing/batch-files";
 import { generateChunkId } from "@/lib/repository-indexing/chunk-id";
 import { chunkFileContent } from "@/lib/repository-indexing/chunking";
-import {
-  generateEmbeddings,
-  resolveEmbeddingModel,
-} from "@/lib/repository-indexing/embeddings";
 import {
   MAX_BATCH_BYTES,
   MAX_FILES_PER_BATCH,
@@ -23,6 +18,7 @@ import {
 const SANDBOX_TIMEOUT_MS = 15 * 60 * 1000;
 const REPO_PATH = "/home/user/repository";
 const PINECONE_INDEX_NAME = process.env.PINEC0NE_INDEX_NAME!;
+const MAX_RECORDS_PER_UPSERT = 96;
 
 type IndexRepositoryEventData = {
   repositoryId: string;
@@ -37,6 +33,14 @@ async function destroySandbox(sandboxId: string) {
   } catch (error) {
     console.error(`Failed to destroy sandbox ${sandboxId}:`, error);
   }
+}
+
+function chunkArray<T>(items: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    chunks.push(items.slice(i, i + size));
+  }
+  return chunks;
 }
 
 export const indexRepository = inngest.createFunction(
@@ -77,7 +81,7 @@ export const indexRepository = inngest.createFunction(
     },
   },
   async ({ event, step }) => {
-    const { repositoryId, userId, githubUrl } = event.data;
+    const { repositoryId, githubUrl } = event.data;
 
     const emit = async (id: string, stage: string, message?: string) => {
       await step.realtime.publish(id, repositoryChannel(repositoryId).status, {
@@ -101,12 +105,10 @@ export const indexRepository = inngest.createFunction(
 
     await step.run("clone-repository", async () => {
       const sandbox = await Sandbox.connect(sandboxId);
-      const result = await sandbox.commands.run(
+      await sandbox.commands.run(
         `git clone --depth 1 ${JSON.stringify(githubUrl)} ${REPO_PATH}`,
         { timeoutMs: 120_000 },
       );
-      console.log("Clone stdout:", result.stdout);
-      console.log("Clone stderr:", result.stderr);
     });
 
     await emit("emit-repository-cloned", "Repository cloned");
@@ -147,26 +149,6 @@ export const indexRepository = inngest.createFunction(
       "emit-files-discovered",
       `Discovered ${filesToIndex.length} files to index`,
     );
-
-    const embeddingDimension = await step.run(
-      "resolve-pinecone-index",
-      async () => {
-        const model = await pinecone.indexes.describe(PINECONE_INDEX_NAME);
-        return model.dimension;
-      },
-    );
-
-    if (!embeddingDimension) {
-      throw new Error(
-        `Pinecone index "${PINECONE_INDEX_NAME}" has no configured dimension.`,
-      );
-    }
-
-    const embeddingModel = resolveEmbeddingModel(embeddingDimension);
-
-    const apiKey = await step.run("get-openai-api-key", () => {
-      return getApiKeyForUser(userId);
-    });
 
     const batches = batchFiles(
       filesToIndex,
@@ -222,26 +204,24 @@ export const indexRepository = inngest.createFunction(
             return 0;
           }
 
-          const vectors = await generateEmbeddings(
-            chunkRecords.map((record) => record.content),
-            embeddingModel,
-            apiKey,
-          );
+          // Pinecone's hosted embedding model turns `text` into a vector
+          // server-side — no separate embeddings call needed.
+          const index = pinecone
+            .index({ name: PINECONE_INDEX_NAME })
+            .namespace(repositoryId);
 
-          const index = pinecone.index({
-            name: PINECONE_INDEX_NAME,
-            namespace: repositoryId,
-          });
-
-          await index.upsert({
-            records: chunkRecords.map((record, i) => ({
-              id: generateChunkId(
-                repositoryId,
-                record.filePath,
-                record.chunkIndex,
-              ),
-              values: vectors[i],
-              metadata: {
+          for (const recordsChunk of chunkArray(
+            chunkRecords,
+            MAX_RECORDS_PER_UPSERT,
+          )) {
+            await index.upsertRecords({
+              records: recordsChunk.map((record) => ({
+                _id: generateChunkId(
+                  repositoryId,
+                  record.filePath,
+                  record.chunkIndex,
+                ),
+                text: record.content,
                 repositoryId,
                 filePath: record.filePath,
                 language: record.language,
@@ -249,10 +229,9 @@ export const indexRepository = inngest.createFunction(
                 startLine: record.startLine,
                 endLine: record.endLine,
                 chunkIndex: record.chunkIndex,
-                content: record.content,
-              },
-            })),
-          });
+              })),
+            });
+          }
 
           return chunkRecords.length;
         },
@@ -262,7 +241,7 @@ export const indexRepository = inngest.createFunction(
 
       await emit(
         `emit-batch-progress-${batchIndex}`,
-        `Embedded batch ${batchIndex + 1} of ${batches.length}`,
+        `Indexed batch ${batchIndex + 1} of ${batches.length}`,
       );
     }
 
