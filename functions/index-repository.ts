@@ -198,7 +198,9 @@ export const indexRepository = inngest.createFunction(
             const content = await sandbox.files.read(
               `${REPO_PATH}/${file.relativePath}`,
             );
-            const fileChunks = chunkFileContent(rule.fileType, content);
+            const fileChunks = chunkFileContent(rule.fileType, content).filter(
+              (chunk) => chunk.content.trim().length > 0,
+            );
 
             fileChunks.forEach((chunk, chunkIndex) => {
               chunkRecords.push({
